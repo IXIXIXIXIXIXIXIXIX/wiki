@@ -31,4 +31,14 @@ def search(request, page_title):
 			"page_title": page_title, "contents": markdown2.markdown(page)
 		})
 	else:
-		
+		# find entries where search string is a substring and pass list of these to template
+		full_list = util.list_entries()
+		near_misses = []
+
+		for entry in full_list:
+			if entry.find(page_title) != -1:
+				near_misses.append(entry)
+
+		return render(request, "encyclpedia/results.html", {
+			"near_misses": near_misses, "page_title": page_title
+		})
