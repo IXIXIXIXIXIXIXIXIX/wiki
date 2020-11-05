@@ -1,5 +1,4 @@
 from django.shortcuts import render
-
 from . import util
 
 import markdown2
@@ -22,23 +21,32 @@ def display(request, page_title):
 			"page_title": page_title	
 		})
 
-def search(request, page_title):
+def search(request):
 	
-	page = util.get_entry(page_title)
+	if request.method == "POST":
+		page_title = request.POST.get("q")
+		page = util.get_entry(page_title)
 
-	if page:
-		return render(request, "encyclopedia/display.html", {
-			"page_title": page_title, "contents": markdown2.markdown(page)
-		})
+		if page:
+			return render(request, "encyclopedia/display.html", {
+				"page_title": page_title, "contents": markdown2.markdown(page)
+			})
+		else:
+			# find entries where search string is a substring and pass list of these to template
+			full_list = util.list_entries()
+			near_misses = []
+
+			for entry in full_list:
+				if entry.find(page_title) != -1:
+					near_misses.append(entry)
+
+			return render(request, "encyclopedia/results.html", {
+				"near_misses": near_misses, "page_title": page_title
+			})
 	else:
-		# find entries where search string is a substring and pass list of these to template
-		full_list = util.list_entries()
-		near_misses = []
-
-		for entry in full_list:
-			if entry.find(page_title) != -1:
-				near_misses.append(entry)
-
-		return render(request, "encyclpedia/results.html", {
-			"near_misses": near_misses, "page_title": page_title
+		# Program flow should never usually reach this point.
+		# TODO render a suitable template for when user manually sends a GET request.
+		return render(request, "encyclopedia/display.html", {
+			"page_title": "TEST", "contents": "This is a test" 
 		})
+
