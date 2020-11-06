@@ -1,7 +1,12 @@
 from django.shortcuts import render
+from django import forms
 from . import util
 
 import markdown2
+
+class NewEntryForm(forms.Form):
+	page_title = forms.CharField(label="New Page Title")
+	page_content = forms.Charfield(label="Entry", widget=forms.Textarea)
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
@@ -45,8 +50,13 @@ def search(request):
 			})
 	else:
 		# Program flow should never usually reach this point.
-		# TODO render a suitable template for when user manually sends a GET request.
-		return render(request, "encyclopedia/display.html", {
-			"page_title": "TEST", "contents": "This is a test" 
+    	return render(request, "encyclopedia/index.html", {
+			"entries": util.list_entries()
 		})
 
+def add(request):
+
+	if request.method == "POST":
+
+	else:
+		return render(request, "add.html"
