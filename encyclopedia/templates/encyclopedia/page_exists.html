@@ -1,0 +1,10 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+	Page Already Exists	
+{% endblock %}
+
+{% block body %}
+	<h1>409 - Conflict: Page Already Exists</h1>
+	<p>There is already a page titled <a href="/wiki/{{ page_title }}">{{ page_title }}</a></p>
+{% endblock %}
